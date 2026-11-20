@@ -11,6 +11,7 @@ import com.apptrackstudy.domain.model.StudyTask
 import com.apptrackstudy.domain.model.Subject
 import com.apptrackstudy.domain.model.SubjectProgress
 import com.apptrackstudy.domain.model.SubTopic
+import com.apptrackstudy.domain.model.SubTopicProgress
 import com.apptrackstudy.domain.repository.StudyRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -118,5 +119,26 @@ class StudyRepositoryImpl @Inject constructor(
 
     override suspend fun clearAllData() {
         database.clearAllTables()
+    }
+
+    override suspend fun restoreSubject(subjectProgress: SubjectProgress) {
+        val newSubjectId = subjectDao.insertSubject(subjectProgress.subject.copy(id = 0).toEntity())
+        for (st in subjectProgress.subTopics) {
+            val newSubTopicId = subTopicDao.insertSubTopic(st.subTopic.copy(id = 0, subjectId = newSubjectId).toEntity())
+            for (task in st.tasks) {
+                taskDao.insertTask(task.copy(id = 0, subTopicId = newSubTopicId).toEntity())
+            }
+        }
+    }
+
+    override suspend fun restoreSubTopic(subTopicProgress: SubTopicProgress) {
+        val newSubTopicId = subTopicDao.insertSubTopic(subTopicProgress.subTopic.copy(id = 0).toEntity())
+        for (task in subTopicProgress.tasks) {
+            taskDao.insertTask(task.copy(id = 0, subTopicId = newSubTopicId).toEntity())
+        }
+    }
+
+    override suspend fun restoreTask(task: StudyTask) {
+        taskDao.insertTask(task.copy(id = 0).toEntity())
     }
 }

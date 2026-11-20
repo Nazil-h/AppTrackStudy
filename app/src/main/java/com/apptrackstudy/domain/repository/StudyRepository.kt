@@ -5,6 +5,7 @@ import com.apptrackstudy.domain.model.StudyTask
 import com.apptrackstudy.domain.model.Subject
 import com.apptrackstudy.domain.model.SubjectProgress
 import com.apptrackstudy.domain.model.SubTopic
+import com.apptrackstudy.domain.model.SubTopicProgress
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -36,4 +37,9 @@ interface StudyRepository {
 
     // --- Reset ---
     suspend fun clearAllData()
+
+    // --- Undo / Restore ---
+    suspend fun restoreSubject(subjectProgress: SubjectProgress)
+    suspend fun restoreSubTopic(subTopicProgress: SubTopicProgress)
+    suspend fun restoreTask(task: StudyTask)
 }
