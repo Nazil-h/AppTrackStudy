@@ -70,3 +70,22 @@ fun SubjectWithSubTopicsRelation.toDomain(): SubjectProgress = SubjectProgress(
     subject = subject.toDomain(),
     subTopics = subTopics.map { it.toDomain() }
 )
+
+fun com.apptrackstudy.data.local.entity.AssignmentEntity.toDomain(): com.apptrackstudy.domain.model.Assignment = com.apptrackstudy.domain.model.Assignment(
+    id = id,
+    title = title,
+    deadline = deadline,
+    isDone = isDone,
+    doneAt = doneAt,
+    createdAt = createdAt
+)
+
+fun com.apptrackstudy.domain.model.Assignment.toEntity(): com.apptrackstudy.data.local.entity.AssignmentEntity = com.apptrackstudy.data.local.entity.AssignmentEntity(
+    id = id,
+    title = title,
+    deadline = deadline,
+    isDone = isDone,
+    doneAt = doneAt,
+    createdAt = createdAt
+)
+

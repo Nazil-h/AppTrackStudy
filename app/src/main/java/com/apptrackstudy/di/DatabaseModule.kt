@@ -3,6 +3,7 @@ package com.apptrackstudy.di
 import android.content.Context
 import androidx.room.Room
 import com.apptrackstudy.data.local.AppDatabase
+import com.apptrackstudy.data.local.dao.AssignmentDao
 import com.apptrackstudy.data.local.dao.SubjectDao
 import com.apptrackstudy.data.local.dao.SubTopicDao
 import com.apptrackstudy.data.local.dao.TaskDao
@@ -26,7 +27,10 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             AppDatabase.DATABASE_NAME
-        ).fallbackToDestructiveMigration().build()
+        )
+            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
@@ -37,4 +41,7 @@ object DatabaseModule {
 
     @Provides
     fun provideTaskDao(database: AppDatabase): TaskDao = database.taskDao()
+
+    @Provides
+    fun provideAssignmentDao(database: AppDatabase): AssignmentDao = database.assignmentDao()
 }

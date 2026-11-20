@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -63,6 +64,7 @@ data class TrackUiState(
     val expandedSubjectIds: Set<Long> = emptySet(),
     val expandedSubTopicIds: Set<Long> = emptySet(),
     val activeDialog: TrackDialogState? = null,
+    val celebrationSubject: Subject? = null,
     val isLoading: Boolean = false
 )
 
@@ -74,23 +76,41 @@ class TrackViewModel @Inject constructor(
     private val _expandedSubjectIds = MutableStateFlow<Set<Long>>(emptySet())
     private val _expandedSubTopicIds = MutableStateFlow<Set<Long>>(emptySet())
     private val _activeDialog = MutableStateFlow<TrackDialogState?>(null)
+    private val _celebrationSubject = MutableStateFlow<Subject?>(null)
+    private var previouslyCompletedSubjectIds: Set<Long>? = null
 
     private val _snackbarEvents = MutableSharedFlow<SnackbarMessage>()
     val snackbarEvents: SharedFlow<SnackbarMessage> = _snackbarEvents.asSharedFlow()
 
     private var lastDeletedItem: DeletedItem? = null
 
+    private val subjectsWithProgress = repository.getSubjectsWithProgress().onEach { list ->
+        val currentCompletedIds = list.filter { it.isCompleted }.map { it.subject.id }.toSet()
+        val prevIds = previouslyCompletedSubjectIds
+        if (prevIds == null) {
+            previouslyCompletedSubjectIds = currentCompletedIds
+        } else {
+            val newlyCompletedSubject = list.firstOrNull { it.isCompleted && !prevIds.contains(it.subject.id) }
+            previouslyCompletedSubjectIds = currentCompletedIds
+            if (newlyCompletedSubject != null) {
+                _celebrationSubject.value = newlyCompletedSubject.subject
+            }
+        }
+    }
+
     val uiState: StateFlow<TrackUiState> = combine(
-        repository.getSubjectsWithProgress(),
+        subjectsWithProgress,
         _expandedSubjectIds,
         _expandedSubTopicIds,
-        _activeDialog
-    ) { subjects, expSubjects, expSubTopics, dialog ->
+        _activeDialog,
+        _celebrationSubject
+    ) { subjects, expSubjects, expSubTopics, dialog, celebration ->
         TrackUiState(
             subjects = subjects,
             expandedSubjectIds = expSubjects,
             expandedSubTopicIds = expSubTopics,
             activeDialog = dialog,
+            celebrationSubject = celebration,
             isLoading = false
         )
     }.stateIn(
@@ -98,6 +118,10 @@ class TrackViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = TrackUiState(isLoading = true)
     )
+
+    fun dismissCelebration() {
+        _celebrationSubject.value = null
+    }
 
     // --- Expand / Collapse (Survives configuration changes via ViewModel) ---
     fun toggleSubjectExpanded(subjectId: Long) {

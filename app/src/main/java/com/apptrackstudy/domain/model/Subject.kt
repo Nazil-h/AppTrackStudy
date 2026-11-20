@@ -7,7 +7,7 @@ data class Subject(
     val id: Long = 0,
     val title: String,
     val emoji: String,
-    val colorIndex: Int,
+    val colorIndex: Int = 0,
     val targetDate: Long? = null,
     val createdAt: Long = System.currentTimeMillis()
 )

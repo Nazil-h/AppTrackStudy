@@ -6,6 +6,7 @@ import com.apptrackstudy.data.local.dao.SubTopicDao
 import com.apptrackstudy.data.local.dao.TaskDao
 import com.apptrackstudy.data.mapper.toDomain
 import com.apptrackstudy.data.mapper.toEntity
+import com.apptrackstudy.domain.model.DailyActivity
 import com.apptrackstudy.domain.model.StudyStats
 import com.apptrackstudy.domain.model.StudyTask
 import com.apptrackstudy.domain.model.Subject
@@ -13,6 +14,7 @@ import com.apptrackstudy.domain.model.SubjectProgress
 import com.apptrackstudy.domain.model.SubTopic
 import com.apptrackstudy.domain.model.SubTopicProgress
 import com.apptrackstudy.domain.repository.StudyRepository
+import com.apptrackstudy.domain.util.StreakCalculator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -88,32 +90,27 @@ class StudyRepositoryImpl @Inject constructor(
     }
 
     override fun getStudyStats(): Flow<StudyStats> {
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        val startOfDay = calendar.timeInMillis
-        calendar.set(Calendar.HOUR_OF_DAY, 23)
-        calendar.set(Calendar.MINUTE, 59)
-        calendar.set(Calendar.SECOND, 59)
-        calendar.set(Calendar.MILLISECOND, 999)
-        val endOfDay = calendar.timeInMillis
-
         return combine(
             taskDao.getTotalTasksCount(),
             taskDao.getCompletedTasksCount(),
             subjectDao.getSubjectsCount(),
-            taskDao.getCompletedTasksCountBetween(startOfDay, endOfDay)
-        ) { totalTasks, completedTasks, totalSubjects, completedToday ->
+            taskDao.getAllCompletedTaskDoneAt()
+        ) { totalTasks, completedTasks, totalSubjects, doneAtList ->
+            val completedToday = StreakCalculator.countCompletedOnDate(doneAtList)
+            val streak = StreakCalculator.calculateStreak(doneAtList)
             StudyStats(
                 totalTasks = totalTasks,
                 completedTasks = completedTasks,
                 totalSubjects = totalSubjects,
                 completedToday = completedToday,
-                streakDays = if (completedToday > 0) 1 else 0
+                streakDays = streak
             )
+        }
+    }
+
+    override fun getWeeklyActivities(): Flow<List<DailyActivity>> {
+        return taskDao.getAllCompletedTaskDoneAt().map { doneAtList ->
+            StreakCalculator.getWeeklyActivities(doneAtList)
         }
     }
 

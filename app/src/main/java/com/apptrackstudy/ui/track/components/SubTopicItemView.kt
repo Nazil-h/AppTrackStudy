@@ -2,6 +2,7 @@ package com.apptrackstudy.ui.track.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -12,13 +13,16 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -54,7 +58,8 @@ import com.apptrackstudy.domain.model.SubTopicProgress
 import com.apptrackstudy.ui.components.ProgressBarWithPercentage
 
 /**
- * Kartu Sub-materi (SubTopic) yang dapat di-expand/collapse untuk melihat materi inti (Task).
+ * Kartu Sub-materi (SubTopic) dengan visual tree guide line (garis penuntun tipis vertikal)
+ * untuk memperjelas hubungan hierarki antara SubTopic dan Task-task di dalamnya.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -69,6 +74,7 @@ fun SubTopicItemView(
     onToggleTaskDone: (taskId: Long, isDone: Boolean) -> Unit,
     onEditTaskClick: (StudyTask) -> Unit,
     onDeleteTaskClick: (StudyTask) -> Unit,
+    onStartTaskTimerClick: (StudyTask) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val subTopic = subTopicProgress.subTopic
@@ -76,18 +82,20 @@ fun SubTopicItemView(
 
     val arrowRotation by animateFloatAsState(
         targetValue = if (isExpanded) 180f else 0f,
+        animationSpec = tween(durationMillis = 260),
         label = "arrowRotationSubTopic"
     )
 
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
             .padding(vertical = 4.dp),
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             // Header Bar SubTopic
@@ -98,18 +106,18 @@ fun SubTopicItemView(
                         onClick = onToggleExpand,
                         onLongClick = { showMenu = true }
                     )
-                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Aksen titik warna
+                // Aksen Titik Warna Bulat
                 Box(
                     modifier = Modifier
-                        .size(8.dp)
-                        .clip(RoundedCornerShape(4.dp))
+                        .size(10.dp)
+                        .clip(CircleShape)
                         .background(accentColor)
                 )
 
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
                 // Judul SubTopic & Info singkat progress
                 Column(modifier = Modifier.weight(1f)) {
@@ -129,10 +137,10 @@ fun SubTopicItemView(
                     }
                 }
 
-                // Tombol Panah Expand/Collapse
+                // Tombol Panah Expand/Collapse (Animasi Rotasi)
                 IconButton(
                     onClick = onToggleExpand,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.ExpandMore,
@@ -148,7 +156,7 @@ fun SubTopicItemView(
                 Box {
                     IconButton(
                         onClick = { showMenu = true },
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
@@ -209,16 +217,16 @@ fun SubTopicItemView(
                 }
             }
 
-            // Konten Task (Materi Inti) dengan animasi buka/tutup halus
+            // Konten Task dengan Visual Tree Guide Line
             AnimatedVisibility(
                 visible = isExpanded,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut()
+                enter = expandVertically(animationSpec = tween(260)) + fadeIn(animationSpec = tween(260)),
+                exit = shrinkVertically(animationSpec = tween(220)) + fadeOut(animationSpec = tween(220))
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     if (subTopicProgress.totalTasksCount > 0) {
                         // Mini progress bar untuk sub-materi
@@ -227,32 +235,52 @@ fun SubTopicItemView(
                             completedTasks = subTopicProgress.completedTasksCount,
                             totalTasks = subTopicProgress.totalTasksCount,
                             accentColor = accentColor,
-                            trackHeight = 4.dp,
+                            trackHeight = 5.dp,
                             showCountText = false,
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
                         )
 
                         HorizontalDivider(
                             modifier = Modifier.padding(vertical = 4.dp),
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)
                         )
 
-                        // Daftar Task
-                        subTopicProgress.tasks.forEach { task ->
-                            TaskItemView(
-                                task = task,
-                                accentColor = accentColor,
-                                onToggleDone = { isDone -> onToggleTaskDone(task.id, isDone) },
-                                onEditClick = { onEditTaskClick(task) },
-                                onDeleteClick = { onDeleteTaskClick(task) }
+                        // Daftar Task dengan Garis Penuntun Hierarki (Tree Guide Line)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Min)
+                                .padding(start = 4.dp)
+                        ) {
+                            // Garis Penuntun Hierarki Tipis
+                            Box(
+                                modifier = Modifier
+                                    .padding(start = 8.dp, end = 8.dp, top = 6.dp, bottom = 6.dp)
+                                    .width(2.dp)
+                                    .fillMaxHeight()
+                                    .background(accentColor.copy(alpha = 0.28f))
                             )
+
+                            // Kolom Daftar Tugas
+                            Column(modifier = Modifier.weight(1f)) {
+                                subTopicProgress.tasks.forEach { task ->
+                                    TaskItemView(
+                                        task = task,
+                                        accentColor = accentColor,
+                                        onToggleDone = { isDone -> onToggleTaskDone(task.id, isDone) },
+                                        onEditClick = { onEditTaskClick(task) },
+                                        onDeleteClick = { onDeleteTaskClick(task) },
+                                        onStartTimerClick = { onStartTaskTimerClick(task) }
+                                    )
+                                }
+                            }
                         }
                     } else {
                         // Empty state jika belum ada task di subtopic ini
                         Text(
                             text = "Belum ada checklist materi inti. Tekan tombol di bawah untuk menambah.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
                         )
                     }
@@ -264,7 +292,7 @@ fun SubTopicItemView(
                     ) {
                         TextButton(
                             onClick = onAddTaskClick,
-                            modifier = Modifier.height(38.dp)
+                            modifier = Modifier.height(44.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,

@@ -2,64 +2,81 @@ package com.apptrackstudy.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Palet Primer & Aksen Jejak Ilmu (Hangat & Menenangkan)
-val PrimaryLight = Color(0xFF20635B)
-val OnPrimaryLight = Color(0xFFFFFFFF)
-val PrimaryContainerLight = Color(0xFFA7EFE3)
-val OnPrimaryContainerLight = Color(0xFF00201D)
+// =========================================================================
+// Palet Warna Desain "Jejak Ilmu"
+// Karakter: Hangat, Tenang, Fokus seperti buku catatan modern.
+// Light mode: Warna dasar krem/putih tulang.
+// Dark mode: Abu-biru gelap hangat (bukan hitam pekat).
+// =========================================================================
 
-val SecondaryLight = Color(0xFF8B5416)
+// --- LIGHT THEME (Hangat & Nyaman di Mata) ---
+val PrimaryLight = Color(0xFF1B6A5D) // Deep Pine / Teal lembut
+val OnPrimaryLight = Color(0xFFFFFFFF)
+val PrimaryContainerLight = Color(0xFFD3EFE8)
+val OnPrimaryContainerLight = Color(0xFF00201B)
+
+val SecondaryLight = Color(0xFF7A5835) // Warm Oak / Cokelat hangat buku
 val OnSecondaryLight = Color(0xFFFFFFFF)
 val SecondaryContainerLight = Color(0xFFFFDDB8)
-val OnSecondaryContainerLight = Color(0xFF2D1600)
+val OnSecondaryContainerLight = Color(0xFF2B1700)
 
-val TertiaryLight = Color(0xFF8B4240)
+val TertiaryLight = Color(0xFF7C5263) // Muted Dusty Rose
 val OnTertiaryLight = Color(0xFFFFFFFF)
-val TertiaryContainerLight = Color(0xFFFFDAD8)
-val OnTertiaryContainerLight = Color(0xFF3B0709)
+val TertiaryContainerLight = Color(0xFFFFD8E5)
+val OnTertiaryContainerLight = Color(0xFF311020)
 
-val BackgroundLight = Color(0xFFF8FAF9)
-val OnBackgroundLight = Color(0xFF191C1B)
-val SurfaceLight = Color(0xFFFFFFFF)
-val OnSurfaceLight = Color(0xFF191C1B)
-val SurfaceVariantLight = Color(0xFFDAE5E1)
-val OnSurfaceVariantLight = Color(0xFF3F4946)
+val BackgroundLight = Color(0xFFFAF7F2) // Krem / Putih tulang
+val OnBackgroundLight = Color(0xFF1E2421)
+val SurfaceLight = Color(0xFFFFFFFF) // Surface murni kartu
+val OnSurfaceLight = Color(0xFF1E2421)
+val SurfaceVariantLight = Color(0xFFEFE8DD) // Surface hangat sekunder
+val OnSurfaceVariantLight = Color(0xFF4C5853)
+val OutlineLight = Color(0xFF828E89)
+val OutlineVariantLight = Color(0xFFE2DDD3) // Border garis pemisah tipis
 
-// Dark Theme Colors
-val PrimaryDark = Color(0xFF8BD3C7)
-val OnPrimaryDark = Color(0xFF003732)
-val PrimaryContainerDark = Color(0xFF005049)
-val OnPrimaryContainerDark = Color(0xFFA7EFE3)
+// --- DARK THEME (Abu-Biru Gelap Hangat, Bukan Hitam Pekat) ---
+val PrimaryDark = Color(0xFF5EC5B0) // Soft Mint Teal
+val OnPrimaryDark = Color(0xFF003730)
+val PrimaryContainerDark = Color(0xFF005047)
+val OnPrimaryContainerDark = Color(0xFFD3EFE8)
 
-val SecondaryDark = Color(0xFFFFB870)
-val OnSecondaryDark = Color(0xFF4A2800)
-val SecondaryContainerDark = Color(0xFF693D00)
+val SecondaryDark = Color(0xFFEBBF90)
+val OnSecondaryDark = Color(0xFF452B0B)
+val SecondaryContainerDark = Color(0xFF5F3F1F)
 val OnSecondaryContainerDark = Color(0xFFFFDDB8)
 
-val TertiaryDark = Color(0xFFFFB3B1)
-val OnTertiaryDark = Color(0xFF561D1C)
-val TertiaryContainerDark = Color(0xFF722B2A)
-val OnTertiaryContainerDark = Color(0xFFFFDAD8)
+val TertiaryDark = Color(0xFFEDB8CC)
+val OnTertiaryDark = Color(0xFF482534)
+val TertiaryContainerDark = Color(0xFF613B4B)
+val OnTertiaryContainerDark = Color(0xFFFFD8E5)
 
-val BackgroundDark = Color(0xFF111413)
-val OnBackgroundDark = Color(0xFFE1E3E1)
-val SurfaceDark = Color(0xFF191C1B)
-val OnSurfaceDark = Color(0xFFE1E3E1)
-val SurfaceVariantDark = Color(0xFF3F4946)
-val OnSurfaceVariantDark = Color(0xFFBFC9C5)
+val BackgroundDark = Color(0xFF141C24) // Abu-biru gelap hangat
+val OnBackgroundDark = Color(0xFFE3E8EC)
+val SurfaceDark = Color(0xFF1C2632) // Permukaan kartu dark yang kontras
+val OnSurfaceDark = Color(0xFFE3E8EC)
+val SurfaceVariantDark = Color(0xFF253342)
+val OnSurfaceVariantDark = Color(0xFFA5B2BE)
+val OutlineDark = Color(0xFF8996A3)
+val OutlineVariantDark = Color(0xFF2D3C4C)
 
-// Palet warna aksen untuk Subject (Mata Kuliah / Materi)
+// =========================================================================
+// 8 Warna Aksen Pastel untuk Subject (Mata Kuliah / Materi)
+// Teruji kontras WCAG AA dan harmonis dengan tema buku catatan modern
+// =========================================================================
 val SubjectColors = listOf(
-    Color(0xFF10B981), // 0: Emerald
-    Color(0xFF6366F1), // 1: Indigo
-    Color(0xFFF59E0B), // 2: Amber
-    Color(0xFFF43F5E), // 3: Rose
-    Color(0xFF06B6D4), // 4: Cyan
-    Color(0xFF8B5CF6), // 5: Violet
-    Color(0xFF14B8A6), // 6: Teal
-    Color(0xFFFF7A59)  // 7: Coral
+    Color(0xFF2E9F83), // 0: Mint Sage
+    Color(0xFF5B6FD1), // 1: Soft Indigo
+    Color(0xFFD9822B), // 2: Warm Amber
+    Color(0xFFD6566B), // 3: Dusty Rose
+    Color(0xFF2C92C7), // 4: Sky Blue
+    Color(0xFF7E64CA), // 5: Soft Violet
+    Color(0xFFC76443), // 6: Terracotta Clay
+    Color(0xFF5F8B57)  // 7: Muted Matcha
 )
 
+/**
+ * Mengambil warna aksen Subject secara aman berdasarkan index.
+ */
 fun getSubjectColor(index: Int): Color {
     val safeIndex = if (index >= 0) index % SubjectColors.size else 0
     return SubjectColors[safeIndex]

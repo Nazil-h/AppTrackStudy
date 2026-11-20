@@ -35,6 +35,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.apptrackstudy.domain.model.StudyTask
 import com.apptrackstudy.domain.model.SubjectProgress
 import com.apptrackstudy.domain.model.SubTopicProgress
+import com.apptrackstudy.ui.components.CelebrationDialog
+import com.apptrackstudy.ui.components.ConfettiEffect
 import com.apptrackstudy.ui.components.ConfirmDeleteDialog
 import com.apptrackstudy.ui.components.EmptyStateView
 import com.apptrackstudy.ui.components.JejakIlmuTopAppBar
@@ -53,6 +55,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun TrackScreen(
     modifier: Modifier = Modifier,
+    onStartTaskTimerClick: (StudyTask) -> Unit = {},
     viewModel: TrackViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -115,9 +118,9 @@ fun TrackScreen(
         ) {
             when {
                 uiState.isLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.primary
+                    com.apptrackstudy.ui.components.ShimmerCardList(
+                        count = 4,
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
 
@@ -192,7 +195,8 @@ fun TrackScreen(
                                         title = task.title,
                                         itemData = task
                                     )
-                                }
+                                },
+                                onStartTaskTimerClick = onStartTaskTimerClick
                             )
                         }
 
@@ -324,6 +328,15 @@ fun TrackScreen(
             }
 
             null -> { /* Tidak ada dialog aktif */ }
+        }
+
+        // --- Perayaan 100% Subject (Konfeti + Dialog Selamat) ---
+        uiState.celebrationSubject?.let { subject ->
+            CelebrationDialog(
+                subject = subject,
+                onDismiss = { viewModel.dismissCelebration() }
+            )
+            ConfettiEffect()
         }
     }
 }

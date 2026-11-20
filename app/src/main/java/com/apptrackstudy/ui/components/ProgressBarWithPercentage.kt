@@ -9,10 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,12 +21,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.apptrackstudy.ui.theme.AppTrackStudyTheme
+import com.apptrackstudy.ui.theme.PillShape
 
 /**
  * Komponen progress bar animasi dengan persentase dan label jumlah task.
+ * Menggunakan sudut pill melengkung penuh dan animasi pengisian yang halus.
  */
 @Composable
 fun ProgressBarWithPercentage(
@@ -41,7 +47,7 @@ fun ProgressBarWithPercentage(
     val targetProgress = (progressPercentage / 100f).coerceIn(0f, 1f)
     val animatedProgress by animateFloatAsState(
         targetValue = targetProgress,
-        animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing),
+        animationSpec = tween(durationMillis = 650, easing = FastOutSlowInEasing),
         label = "progressAnimation"
     )
 
@@ -76,9 +82,38 @@ fun ProgressBarWithPercentage(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(trackHeight)
-                .clip(RoundedCornerShape(trackHeight / 2)),
+                .clip(PillShape),
             color = accentColor,
-            trackColor = accentColor.copy(alpha = 0.2f)
+            trackColor = accentColor.copy(alpha = 0.16f),
+            strokeCap = StrokeCap.Round
         )
+    }
+}
+
+@Preview(name = "Light Mode", showBackground = true)
+@Composable
+private fun ProgressBarPreviewLight() {
+    AppTrackStudyTheme(darkTheme = false) {
+        Surface(modifier = Modifier.padding(16.dp)) {
+            ProgressBarWithPercentage(
+                progressPercentage = 65f,
+                completedTasks = 13,
+                totalTasks = 20
+            )
+        }
+    }
+}
+
+@Preview(name = "Dark Mode", showBackground = true)
+@Composable
+private fun ProgressBarPreviewDark() {
+    AppTrackStudyTheme(darkTheme = true) {
+        Surface(modifier = Modifier.padding(16.dp)) {
+            ProgressBarWithPercentage(
+                progressPercentage = 80f,
+                completedTasks = 8,
+                totalTasks = 10
+            )
+        }
     }
 }

@@ -41,4 +41,7 @@ interface TaskDao {
 
     @Query("SELECT COUNT(*) FROM tasks WHERE isDone = 1 AND doneAt >= :startOfDay AND doneAt <= :endOfDay")
     fun getCompletedTasksCountBetween(startOfDay: Long, endOfDay: Long): Flow<Int>
+
+    @Query("SELECT doneAt FROM tasks WHERE isDone = 1 AND doneAt IS NOT NULL ORDER BY doneAt DESC")
+    fun getAllCompletedTaskDoneAt(): Flow<List<Long>>
 }

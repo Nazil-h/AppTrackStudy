@@ -1,5 +1,6 @@
 package com.apptrackstudy.domain.repository
 
+import com.apptrackstudy.domain.model.DailyActivity
 import com.apptrackstudy.domain.model.StudyStats
 import com.apptrackstudy.domain.model.StudyTask
 import com.apptrackstudy.domain.model.Subject
@@ -34,6 +35,7 @@ interface StudyRepository {
 
     // --- Stats & Overview ---
     fun getStudyStats(): Flow<StudyStats>
+    fun getWeeklyActivities(): Flow<List<DailyActivity>>
 
     // --- Reset ---
     suspend fun clearAllData()
